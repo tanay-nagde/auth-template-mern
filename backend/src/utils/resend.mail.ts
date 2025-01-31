@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 import { ApiError } from './ApiError';
-const resend = new Resend('re_123456789');
+const resend = new Resend('re_FTxNXTd2_968c1Aeqyq6H6J4hJANMnT76');
 
 type Email = {
     from: string;

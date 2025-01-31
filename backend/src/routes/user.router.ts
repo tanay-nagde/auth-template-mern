@@ -1,8 +1,9 @@
-import { Router } from "express";
-import { registeruser } from "../controllers/user.controller";
+    import { Router } from "express";
+    import { loginuser, registeruser, verifyOTPandLogin } from "../controllers/user.controller";
 
-const userrouter = Router();
+    const userrouter = Router();
 
-userrouter.post('/register', registeruser )
-
-export {userrouter};
+    userrouter.post('/register', registeruser )
+    userrouter.post('/login', loginuser )
+    userrouter.post('/login/verify-otp/:id', verifyOTPandLogin )
+    export {userrouter};

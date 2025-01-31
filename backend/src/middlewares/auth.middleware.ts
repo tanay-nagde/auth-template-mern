@@ -2,6 +2,8 @@ import { RequestHandler, Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { JWT_SECRET } from "../utils/constants"; // Make sure this is defined in your project
 import User  from "../models/user.model";
+import { date } from "zod";
+import { ApiError } from "../utils/ApiError";
 
 export interface AuthRequest extends Request {
     user?: {
@@ -18,16 +20,22 @@ const authenticate = async (req: AuthRequest, res :Response, next : NextFunction
       req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      return res.status(401).json({ error: "Access token is missing or invalid" });
+      throw new ApiError(401, "Unauthorized acess");
     }
 
     // Verify the token
     const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
 
+  
+
     // Optionally fetch user from the database
     const user = await User.findById(decoded._id).select("-password");
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      throw new ApiError(401, "Unauthorized no user found");
+    }
+    const session = user?.sessions?.find((s) => {s?.jwt === token && s?.expiresIn.getTime() > Date.now() });
+    if (!session) {
+      throw new ApiError(401, "Session not found or revoked");
     }
 
     // Attach user information to the request
@@ -35,7 +43,7 @@ const authenticate = async (req: AuthRequest, res :Response, next : NextFunction
 
     next();
   } catch (error: any) {
-    res.status(401).json({ error: error.message || "Unauthorized" });
+    throw new error(error);
    
   }
 };

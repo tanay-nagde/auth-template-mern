@@ -27,6 +27,7 @@ export const ACCESS_TOKEN_EXPIRY = getEnv("ACCESS_TOKEN_EXPIRY");
 const enum VerificationCodeType {
   EmailVerification = "email_verification",
   PasswordReset = "password_reset",
+  login = "login_verification"
 }
 
 export { VerificationCodeType};
